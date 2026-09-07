@@ -22,5 +22,3 @@ spec:
   type: oci
   interval: 5m
   url: oci://registry-1.docker.io/mehb786
-  secretRef:
-    name: dockerhub-credentials
