@@ -1,17 +1,19 @@
 # Kubernetes deployment
 
-The application is packaged only as `helm/python-simple-app` at the repository
-root and is deployed directly with Helm. It is not included in Flux and has no
-Flux Kustomization or HelmRelease. The LGTM stack is packaged
-only as Flux `HelmRelease` resources under `flux/observability`, grouped by a
-Kustomize file. It includes Grafana, Loki, Tempo, Mimir, and Grafana Alloy.
+The application is packaged as the OCI chart `mehb786/python-simple-app` from
+`helm/python-simple-app` and is deployed by Flux through a HelmRelease. The
+LGTM stack is packaged as the OCI chart `mehb786/lgtm` from `helm/lgtm` and is
+deployed by a separate Flux HelmRelease grouped by a small Kustomize file. It
+includes Grafana, Loki, Tempo, Mimir, and Grafana Alloy.
 
 The application source and Docker build context are under `application/`.
 Build the image from that directory and push it as
 `mehb786/python-simple-app:latest`.
 
-The workflow at `.github/workflows/ci.yml` builds from `application/` and
-publishes immutable tags in the form `v1.0.${GITHUB_RUN_NUMBER}`. Configure
+The workflow at `.github/workflows/ci.yml` builds from `application/`, publishes
+immutable image tags in the form `v1.0.${GITHUB_RUN_NUMBER}`, and publishes
+both Helm charts as OCI artifacts with version `0.1.${GITHUB_RUN_NUMBER}`.
+Configure
 these repository secrets before enabling it:
 
 ```text
@@ -19,10 +21,10 @@ DOCKERHUB_USERNAME
 DOCKERHUB_TOKEN
 ```
 
-The Python app is intentionally not managed by Flux in this repository. Flux
-cannot automatically deploy a new image tag without a Flux `HelmRelease` (or
-another Flux-managed workload) referencing the chart. Run the Helm upgrade
-command below after selecting the tag published by CI.
+Flux manages both HelmReleases. Update the application image tag in
+`deploy/flux-system/python-simple-app-helmrelease.yaml` to the CI-published
+`v1.0.x` tag, and Flux will reconcile the new image. The chart versions are
+selected from Docker Hub OCI using `>=0.1.0`.
 
 Install or upgrade the application directly:
 

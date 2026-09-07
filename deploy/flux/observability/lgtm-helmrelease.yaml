@@ -1,0 +1,195 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: lgtm
+  namespace: observability
+spec:
+  interval: 5m
+  chart:
+    spec:
+      chart: lgtm
+      version: ">=0.1.0"
+      sourceRef:
+        kind: HelmRepository
+        name: dockerhub-charts
+        namespace: flux-system
+  values:
+    grafana:
+      admin:
+        user: admin
+        password: admin
+      grafana.ini:
+        auth.anonymous:
+          enabled: true
+          org_role: Viewer
+      service:
+        type: NodePort
+        nodePort: 30000
+      persistence:
+        enabled: false
+      datasources:
+        datasources.yaml:
+          apiVersion: 1
+          datasources:
+            - name: Mimir
+              type: prometheus
+              access: proxy
+              url: http://mimir-nginx.observability.svc.cluster.local/prometheus
+              isDefault: true
+              jsonData:
+                httpMethod: POST
+            - name: Tempo
+              type: tempo
+              access: proxy
+              url: http://tempo.observability.svc.cluster.local:3200
+            - name: Loki
+              type: loki
+              access: proxy
+              url: http://loki-gateway.observability.svc.cluster.local
+    loki:
+      deploymentMode: SingleBinary
+      loki:
+        auth_enabled: false
+        useTestSchema: true
+        commonConfig:
+          replication_factor: 1
+        storage:
+          type: filesystem
+      singleBinary:
+        replicas: 1
+      read:
+        replicas: 0
+      write:
+        replicas: 0
+      backend:
+        replicas: 0
+      chunksCache:
+        enabled: false
+      resultsCache:
+        enabled: false
+      gateway:
+        enabled: true
+        service:
+          type: NodePort
+          nodePort: 30100
+      minio:
+        enabled: false
+    tempo:
+      tempo:
+        reportingEnabled: false
+        receivers:
+          otlp:
+            protocols:
+              grpc:
+                endpoint: 0.0.0.0:4317
+              http:
+                endpoint: 0.0.0.0:4318
+      persistence:
+        enabled: false
+      service:
+        type: NodePort
+    mimir:
+      minio:
+        enabled: false
+      alertmanager:
+        enabled: false
+      ruler:
+        enabled: false
+      nginx:
+        enabled: true
+        service:
+          type: NodePort
+          nodePort: 30300
+      distributor:
+        replicas: 1
+      ingester:
+        replicas: 1
+        zoneAwareReplication:
+          enabled: false
+      querier:
+        replicas: 1
+      query_frontend:
+        replicas: 1
+      query_scheduler:
+        replicas: 1
+      store_gateway:
+        replicas: 1
+        zoneAwareReplication:
+          enabled: false
+      compactor:
+        replicas: 1
+      memcached:
+        enabled: false
+      memcachedExporter:
+        enabled: false
+      resultsCache:
+        enabled: false
+      chunksCache:
+        enabled: false
+      overrides_exporter:
+        enabled: false
+      mimir:
+        structuredConfig:
+          multitenancy_enabled: false
+          ingester:
+            ring:
+              replication_factor: 1
+          common:
+            storage:
+              backend: filesystem
+          blocks_storage:
+            backend: filesystem
+            filesystem:
+              dir: /data/blocks
+          compactor:
+            data_dir: /data/compactor
+          ruler:
+            rule_path: /data/ruler
+          store_gateway:
+            sharding_ring:
+              replication_factor: 1
+    alloy:
+      alloy:
+        configMap:
+          content: |
+            otelcol.receiver.otlp "default" {
+              grpc { endpoint = "0.0.0.0:4317" }
+              http { endpoint = "0.0.0.0:4318" }
+              output {
+                traces = [otelcol.processor.batch.default.input]
+                metrics = [otelcol.processor.batch.default.input]
+              }
+            }
+            otelcol.processor.batch "default" {
+              output {
+                traces = [otelcol.exporter.otlp.tempo.input]
+                metrics = [otelcol.exporter.prometheus.remote_write.input]
+              }
+            }
+            otelcol.exporter.otlp "tempo" {
+              client {
+                endpoint = "tempo.observability.svc.cluster.local:4317"
+                tls { insecure = true }
+              }
+            }
+            otelcol.exporter.prometheus "remote_write" {
+              forward_to = [prometheus.remote_write.default.receiver]
+            }
+            prometheus.remote_write "default" {
+              endpoint {
+                url = "http://mimir-nginx.observability.svc.cluster.local/api/v1/push"
+              }
+            }
+        extraPorts:
+          - name: otlp-grpc
+            port: 4317
+            targetPort: 4317
+            nodePort: 30431
+            protocol: TCP
+          - name: otlp-http
+            port: 4318
+            targetPort: 4318
+            nodePort: 30432
+            protocol: TCP
+      service:
+        type: NodePort

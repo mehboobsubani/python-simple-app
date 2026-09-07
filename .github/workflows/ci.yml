@@ -8,6 +8,7 @@ on:
 
 env:
   IMAGE_NAME: mehb786/python-simple-app
+  CHART_REGISTRY: oci://registry-1.docker.io/mehb786
 
 jobs:
   build-and-publish:
@@ -37,5 +38,24 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Publish image tag
-        run: echo "Published ${{ env.IMAGE_NAME }}:v1.0.${{ github.run_number }}"
+      - name: Set up Helm
+        uses: azure/setup-helm@v4
+
+      - name: Log in to Docker Hub for OCI charts
+        run: |
+          echo "${{ secrets.DOCKERHUB_TOKEN }}" |
+            helm registry login registry-1.docker.io \
+              --username "${{ secrets.DOCKERHUB_USERNAME }}" \
+              --password-stdin
+
+      - name: Package and push Helm charts
+        env:
+          CHART_VERSION: 0.1.${{ github.run_number }}
+        run: |
+          helm dependency build helm/lgtm
+          helm package helm/python-simple-app --version "$CHART_VERSION"
+          helm package helm/lgtm --version "$CHART_VERSION"
+          helm push "python-simple-app-${CHART_VERSION}.tgz" "$CHART_REGISTRY"
+          helm push "lgtm-${CHART_VERSION}.tgz" "$CHART_REGISTRY"
+          echo "Published ${IMAGE_NAME}:v1.0.${{ github.run_number }}"
+          echo "Published OCI charts with version ${CHART_VERSION}"

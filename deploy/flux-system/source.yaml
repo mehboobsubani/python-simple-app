@@ -1,7 +1,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: observability-manifests
+  name: application-manifests
   namespace: flux-system
 spec:
   interval: 1m
@@ -10,3 +10,13 @@ spec:
   url: https://github.com/mehboobsubani/python-simple-app
   ref:
     branch: main
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: dockerhub-charts
+  namespace: flux-system
+spec:
+  type: oci
+  interval: 5m
+  url: oci://registry-1.docker.io/mehb786
