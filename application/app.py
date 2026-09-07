@@ -6,6 +6,7 @@ from concurrent import futures
 
 import grpc
 from flask import Flask, jsonify, request
+from markupsafe import escape
 
 import greeting_pb2
 import greeting_pb2_grpc
@@ -95,10 +96,29 @@ def cart():
     ), 201
 
 
-@app.post("/assistant")
+@app.route("/assistant", methods=["GET", "POST"])
 def assistant():
     """Answer a shopping question using the local Ollama model."""
-    payload = request.get_json(silent=True) or {}
+    if request.method == "GET":
+        return """
+        <!doctype html>
+        <html>
+          <head><title>Shopping Assistant</title></head>
+          <body>
+            <h1>Shopping Assistant</h1>
+            <form method="post">
+              <label for="question">Ask about the product catalog:</label><br>
+              <input id="question" name="question" size="60" required>
+              <button type="submit">Ask Ollama</button>
+            </form>
+          </body>
+        </html>
+        """
+
+    if request.content_type and request.content_type.startswith("application/json"):
+        payload = request.get_json(silent=True) or {}
+    else:
+        payload = request.form
     question = payload.get("question")
     if not isinstance(question, str) or not question.strip():
         return jsonify({"error": "question must be a non-empty string"}), 400
@@ -111,7 +131,11 @@ def assistant():
     try:
         answer = ollama_client.generate(prompt)
     except ollama_client.OllamaError as exc:
+        if not request.is_json:
+            return f"<h1>Ollama error</h1><p>{escape(exc)}</p>", 503
         return jsonify({"error": str(exc)}), 503
+    if not request.is_json:
+        return f"<h1>Shopping Assistant</h1><p>{escape(answer)}</p><p><a href='/assistant'>Ask another question</a></p>"
     return jsonify({"answer": answer, "model": os.getenv("OLLAMA_MODEL", "llama3.2")})
 
 
