@@ -1,2 +1,2 @@
 # python-simple-app
-This is Going to be a small and simple python flask based application using lgtm stack and helm along with flux
+This is a small  and simple python flask based application using LGTM stack along with helm,flux following kustomize pattern 
