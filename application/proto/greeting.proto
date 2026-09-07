@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package greeting;
+
+service ShoppingCatalog {
+  rpc GetProduct (ProductRequest) returns (Product);
+}
+
+message ProductRequest {
+  string product_id = 1;
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  string description = 3;
+  double price = 4;
+  string currency = 5;
+  int32 stock = 6;
+}

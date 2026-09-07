@@ -17,7 +17,7 @@ spec:
     image:
       # Set this to the image loaded into kind or to a registry image.
       repository: mehb786/python-simple-app
-      tag: latest
+      tag: shopping-v2
       pullPolicy: IfNotPresent
     replicaCount: 1
     ingress:

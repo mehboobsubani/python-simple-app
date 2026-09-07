@@ -1,6 +1,6 @@
 apiVersion: v2
 name: python-simple-app
-description: Flask and gRPC greeting application
+description: Flask and gRPC shopping application
 type: application
 version: 0.1.0
 appVersion: "0.1.0"
