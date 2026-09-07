@@ -29,6 +29,28 @@ def test_missing_product_returns_not_found(client):
     assert response.status_code == 404
 
 
+def test_assistant_uses_ollama(client, monkeypatch):
+    monkeypatch.setattr(
+        app.ollama_client,
+        "generate",
+        lambda prompt: "The mechanical keyboard is a good developer choice.",
+    )
+
+    response = client.post(
+        "/assistant", json={"question": "What is good for a developer?"}
+    )
+
+    assert response.status_code == 200
+    assert response.get_json()["model"] == "llama3.2"
+    assert "mechanical keyboard" in response.get_json()["answer"]
+
+
+def test_assistant_requires_question(client):
+    response = client.post("/assistant", json={})
+
+    assert response.status_code == 400
+
+
 def test_grpc_product_lookup():
     with socket.socket() as sock:
         sock.bind(("localhost", 0))

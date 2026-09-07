@@ -18,6 +18,10 @@ otel:
   endpoint: http://alloy.observability.svc.cluster.local:4317
   serviceName: python-simple-app
 
+ollama:
+  url: http://host.docker.internal:11434
+  model: llama3.2
+
 resources:
   requests:
     cpu: 100m

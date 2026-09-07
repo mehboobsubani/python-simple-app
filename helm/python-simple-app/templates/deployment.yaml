@@ -42,6 +42,10 @@ spec:
               value: grpc
             - name: OTEL_EXPORTER_OTLP_INSECURE
               value: "true"
+            - name: OLLAMA_URL
+              value: {{ .Values.ollama.url | quote }}
+            - name: OLLAMA_MODEL
+              value: {{ .Values.ollama.model | quote }}
           readinessProbe:
             httpGet:
               path: /health

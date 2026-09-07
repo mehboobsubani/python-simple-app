@@ -1,5 +1,6 @@
 """Flask and gRPC shopping application."""
 
+import json
 import os
 from concurrent import futures
 
@@ -8,6 +9,7 @@ from flask import Flask, jsonify, request
 
 import greeting_pb2
 import greeting_pb2_grpc
+import ollama_client
 import telemetry
 
 
@@ -91,6 +93,31 @@ def cart():
             "currency": item["currency"],
         }
     ), 201
+
+
+@app.post("/assistant")
+def assistant():
+    """Answer a shopping question using the local Ollama model."""
+    payload = request.get_json(silent=True) or {}
+    question = payload.get("question")
+    if not isinstance(question, str) or not question.strip():
+        return jsonify({"error": "question must be a non-empty string"}), 400
+
+    catalog = json_catalog()
+    prompt = (
+        "You are a concise shopping assistant. Answer only using this product "
+        f"catalog:\n{catalog}\n\nCustomer question: {question.strip()}"
+    )
+    try:
+        answer = ollama_client.generate(prompt)
+    except ollama_client.OllamaError as exc:
+        return jsonify({"error": str(exc)}), 503
+    return jsonify({"answer": answer, "model": os.getenv("OLLAMA_MODEL", "llama3.2")})
+
+
+def json_catalog():
+    """Return the catalog as stable JSON for the model prompt."""
+    return json.dumps(list(PRODUCTS.values()), sort_keys=True)
 
 
 class ShoppingCatalog(greeting_pb2_grpc.ShoppingCatalogServicer):
