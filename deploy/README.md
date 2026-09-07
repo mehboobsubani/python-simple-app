@@ -70,15 +70,24 @@ For the kind cluster, these observability services are exposed as NodePorts:
 
 | Service | URL/port |
 |---|---|
-| Grafana | `http://localhost:30000` |
-| Loki gateway | `http://localhost:30100` |
-| Tempo | `http://localhost:30200` |
-| Mimir | `http://localhost:30300` |
-| Alloy OTLP/gRPC | `localhost:30431` |
-| Alloy OTLP/HTTP | `localhost:30432` |
+| Grafana | `lgtm-grafana`, port `30000` |
+| Loki gateway | `lgtm-loki-gateway`, port `30100` |
+| Tempo | `lgtm-tempo`, port assigned by Helm |
+| Mimir | `lgtm-mimir-nginx`, port `30300` |
+| Alloy OTLP/gRPC | `lgtm-alloy`, port assigned by Helm |
+| Alloy OTLP/HTTP | `lgtm-alloy`, port assigned by Helm |
 
 If the kind cluster does not publish NodePorts to the host, use
 `kubectl port-forward` against the corresponding service instead.
+
+For Grafana, the reliable local command is:
+
+```bash
+kubectl --context=kind-kind port-forward \
+  -n observability svc/lgtm-grafana 3000:80
+```
+
+Then open `http://localhost:3000`.
 
 The `observability-manifests` Git source points to
 `https://github.com/mehboobsubani/python-simple-app` only so Flux can fetch the
