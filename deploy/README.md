@@ -10,6 +10,20 @@ The application source and Docker build context are under `application/`.
 Build the image from that directory and push it as
 `mehb786/python-simple-app:latest`.
 
+The workflow at `.github/workflows/ci.yml` builds from `application/` and
+publishes immutable tags in the form `v1.0.${GITHUB_RUN_NUMBER}`. Configure
+these repository secrets before enabling it:
+
+```text
+DOCKERHUB_USERNAME
+DOCKERHUB_TOKEN
+```
+
+The Python app is intentionally not managed by Flux in this repository. Flux
+cannot automatically deploy a new image tag without a Flux `HelmRelease` (or
+another Flux-managed workload) referencing the chart. Run the Helm upgrade
+command below after selecting the tag published by CI.
+
 Install or upgrade the application directly:
 
 ```bash

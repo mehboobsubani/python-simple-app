@@ -2,7 +2,7 @@ replicaCount: 2
 
 image:
   repository: mehb786/python-simple-app
-  tag: latest
+  tag: v1.0.0
   pullPolicy: IfNotPresent
 
 serviceAccount:
