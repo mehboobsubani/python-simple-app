@@ -16,10 +16,10 @@ spec:
   values:
     image:
       repository: mehb786/python-simple-app
-      tag: v1.0.0 # {"$imagepolicy": "flux-system:python-simple-app"}
+      tag: v1.0.6 # {"$imagepolicy": "flux-system:python-simple-app"}
       pullPolicy: IfNotPresent
     replicaCount: 1
     ingress:
       enabled: true
     otel:
-      endpoint: http://alloy.observability.svc.cluster.local:4317
+      endpoint: http://lgtm-alloy.observability.svc.cluster.local:4317
