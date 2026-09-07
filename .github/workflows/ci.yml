@@ -57,7 +57,7 @@ jobs:
           helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
           helm repo update
           helm dependency build helm/lgtm
-          sed -i "s/tag: v1.0.0/tag: ${IMAGE_TAG}/" helm/python-simple-app/values.yaml
+          sed -i -E "s/tag: v1\\.0\\.[0-9]+/tag: ${IMAGE_TAG}/" helm/python-simple-app/values.yaml
           helm package helm/python-simple-app --version "$CHART_VERSION"
           helm package helm/lgtm --version "$CHART_VERSION"
           helm push "python-simple-app-${CHART_VERSION}.tgz" "$CHART_REGISTRY"
