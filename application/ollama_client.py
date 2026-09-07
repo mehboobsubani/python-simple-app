@@ -23,6 +23,12 @@ def generate(prompt: str) -> str:
     try:
         with request.urlopen(http_request, timeout=float(os.getenv("OLLAMA_TIMEOUT", "60"))) as response:
             result = json.loads(response.read())
+    except error.HTTPError as exc:
+        try:
+            detail = exc.read().decode("utf-8")
+        except UnicodeDecodeError:
+            detail = exc.reason
+        raise OllamaError(f"Ollama returned HTTP {exc.code}: {detail}") from exc
     except (error.URLError, TimeoutError, json.JSONDecodeError) as exc:
         raise OllamaError(f"Ollama request failed: {exc}") from exc
 
