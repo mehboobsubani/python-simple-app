@@ -16,12 +16,18 @@ spec:
   values:
     minio:
       enabled: false
+    alertmanager:
+      enabled: false
+    ruler:
+      enabled: false
     nginx:
       enabled: true
     distributor:
       replicas: 1
     ingester:
       replicas: 1
+      zoneAwareReplication:
+        enabled: false
     querier:
       replicas: 1
     query_frontend:
@@ -30,6 +36,8 @@ spec:
       replicas: 1
     store_gateway:
       replicas: 1
+      zoneAwareReplication:
+        enabled: false
     compactor:
       replicas: 1
     memcached:
@@ -57,6 +65,8 @@ spec:
             dir: /data/blocks
         compactor:
           data_dir: /data/compactor
+        ruler:
+          rule_path: /data/ruler
         store_gateway:
           sharding_ring:
             replication_factor: 1
