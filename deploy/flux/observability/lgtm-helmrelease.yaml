@@ -34,6 +34,7 @@ spec:
             - name: Mimir
               type: prometheus
               access: proxy
+              uid: mimir
               url: http://lgtm-mimir-nginx.observability.svc.cluster.local/prometheus
               isDefault: true
               jsonData:
@@ -46,6 +47,59 @@ spec:
               type: loki
               access: proxy
               url: http://lgtm-loki-gateway.observability.svc.cluster.local
+      alerting:
+        rules.yaml:
+          apiVersion: 1
+          groups:
+            - orgId: 1
+              name: python-application
+              folder: Python application
+              interval: 1m
+              rules:
+                - uid: python-application-down
+                  title: Python application is down
+                  condition: C
+                  data:
+                    - refId: A
+                      relativeTimeRange:
+                        from: 300
+                        to: 0
+                      datasourceUid: mimir
+                      model:
+                        expr: kube_deployment_status_replicas_available{namespace="python-simple-app", deployment="python-simple-app"}
+                        refId: A
+                    - refId: C
+                      relativeTimeRange:
+                        from: 300
+                        to: 0
+                      datasourceUid: "-100"
+                      model:
+                        conditions:
+                          - evaluator:
+                              params:
+                                - 1
+                              type: lt
+                            operator:
+                              type: and
+                            query:
+                              params:
+                                - A
+                            reducer:
+                              params: []
+                              type: last
+                            type: query
+                        expression: A
+                        refId: C
+                        type: classic_conditions
+                  noDataState: Alerting
+                  execErrState: Alerting
+                  for: 2m
+                  annotations:
+                    summary: Python application has no available replicas
+                    description: The python-simple-app deployment has no ready pods.
+                  labels:
+                    service: python-simple-app
+                    severity: critical
     loki:
       deploymentMode: SingleBinary
       loki:
@@ -92,7 +146,10 @@ spec:
       minio:
         enabled: false
       alertmanager:
-        enabled: false
+        enabled: true
+        replicas: 1
+        zoneAwareReplication:
+          enabled: false
       ruler:
         enabled: false
       nginx:
@@ -182,6 +239,9 @@ spec:
             }
             discovery.kubernetes "pods" {
               role = "pod"
+              namespaces {
+                names = ["python-simple-app"]
+              }
             }
             loki.source.kubernetes "pods" {
               targets    = discovery.kubernetes.pods.targets
@@ -191,6 +251,12 @@ spec:
               endpoint {
                 url = "http://lgtm-loki-gateway.observability.svc.cluster.local/loki/api/v1/push"
               }
+            }
+            prometheus.scrape "kube_state_metrics" {
+              targets = [{
+                __address__ = "lgtm-kube-state-metrics.observability.svc.cluster.local:8080",
+              }]
+              forward_to = [prometheus.remote_write.default.receiver]
             }
         extraPorts:
           - name: otlp-grpc
