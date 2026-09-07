@@ -8,7 +8,7 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY app.py telemetry.py greeting_pb2.py greeting_pb2_grpc.py ./
+COPY app.py telemetry.py ollama_client.py greeting_pb2.py greeting_pb2_grpc.py ./
 COPY proto ./proto
 
 EXPOSE 5000 50051
