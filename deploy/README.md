@@ -5,6 +5,10 @@ that chart through `flux/apps/helmrelease.yaml`. The LGTM stack is packaged
 only as Flux `HelmRelease` resources under `flux/observability`, grouped by a
 Kustomize file. It includes Grafana, Loki, Tempo, Mimir, and Grafana Alloy.
 
+The application source and Docker build context are under `application/`.
+Build the image from that directory and push it as
+`mehb786/python-simple-app:latest`.
+
 Alloy receives OTLP traces and metrics from the app, sends traces to Tempo,
 and remote-writes metrics to Mimir. Grafana is provisioned with Mimir, Tempo,
 and Loki datasources for Explore.
