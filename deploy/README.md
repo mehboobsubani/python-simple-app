@@ -27,6 +27,20 @@ Alloy receives OTLP traces and metrics from the app, sends traces to Tempo,
 and remote-writes metrics to Mimir. Grafana is provisioned with Mimir, Tempo,
 and Loki datasources for Explore.
 
+For the kind cluster, these observability services are exposed as NodePorts:
+
+| Service | URL/port |
+|---|---|
+| Grafana | `http://localhost:30000` |
+| Loki gateway | `http://localhost:30100` |
+| Tempo | `http://localhost:30200` |
+| Mimir | `http://localhost:30300` |
+| Alloy OTLP/gRPC | `localhost:30431` |
+| Alloy OTLP/HTTP | `localhost:30432` |
+
+If the kind cluster does not publish NodePorts to the host, use
+`kubectl port-forward` against the corresponding service instead.
+
 The `observability-manifests` Git source points to
 `https://github.com/mehboobsubani/python-simple-app` only so Flux can fetch the
 LGTM manifests under `deploy/flux/observability`. It does not deploy or

@@ -22,7 +22,8 @@ spec:
         enabled: true
         org_role: Viewer
     service:
-      type: ClusterIP
+      type: NodePort
+      nodePort: 30000
     persistence:
       enabled: false
     sidecar:

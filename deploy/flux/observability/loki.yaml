@@ -36,5 +36,8 @@ spec:
       enabled: false
     gateway:
       enabled: true
+      service:
+        type: NodePort
+        nodePort: 30100
     minio:
       enabled: false

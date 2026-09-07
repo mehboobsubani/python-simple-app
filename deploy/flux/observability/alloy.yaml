@@ -53,10 +53,13 @@ spec:
         - name: otlp-grpc
           port: 4317
           targetPort: 4317
+          nodePort: 30431
           protocol: TCP
         - name: otlp-http
           port: 4318
           targetPort: 4318
+          nodePort: 30432
           protocol: TCP
     service:
-      type: ClusterIP
+      type: NodePort
+      nodePort: 30431

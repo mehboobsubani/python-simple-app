@@ -22,6 +22,9 @@ spec:
       enabled: false
     nginx:
       enabled: true
+      service:
+        type: NodePort
+        nodePort: 30300
     distributor:
       replicas: 1
     ingester:
