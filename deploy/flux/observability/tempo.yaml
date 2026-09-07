@@ -17,8 +17,6 @@ spec:
     tempo:
       reportingEnabled: false
       receivers:
-        jaeger: null
-        zipkin: null
         otlp:
           protocols:
             grpc:
