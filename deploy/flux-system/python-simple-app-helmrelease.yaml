@@ -4,7 +4,7 @@ metadata:
   name: python-simple-app
   namespace: python-simple-app
 spec:
-  interval: 5m
+  interval: 1m
   upgrade:
     preserveValues: false
   chart:
