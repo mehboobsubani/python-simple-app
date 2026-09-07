@@ -27,11 +27,12 @@ Alloy receives OTLP traces and metrics from the app, sends traces to Tempo,
 and remote-writes metrics to Mimir. Grafana is provisioned with Mimir, Tempo,
 and Loki datasources for Explore.
 
-The Flux Git URL is configured for
-`https://github.com/mehboobsubani/python-simple-app`. For a private repository,
+The `observability-manifests` Git source points to
+`https://github.com/mehboobsubani/python-simple-app` only so Flux can fetch the
+LGTM manifests under `deploy/flux/observability`. It does not deploy or
+reference the Python application Helm chart. For a private repository,
 configure Flux authentication separately; no Secret or credential is included
-in this repository. Set the Docker Hub image repository and tag in the
-HelmRelease (or Helm values) rather than changing templates.
+in this repository.
 
 The local Helm values use ephemeral storage and are not intended for durable
 production observability data. For production, configure persistent storage,

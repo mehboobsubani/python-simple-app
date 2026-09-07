@@ -9,6 +9,6 @@ spec:
   prune: true
   sourceRef:
     kind: GitRepository
-    name: python-simple-app
+    name: observability-manifests
   wait: true
   timeout: 5m
