@@ -180,6 +180,18 @@ spec:
                 url = "http://lgtm-mimir-nginx.observability.svc.cluster.local/api/v1/push"
               }
             }
+            discovery.kubernetes "pods" {
+              role = "pod"
+            }
+            loki.source.kubernetes "pods" {
+              targets    = discovery.kubernetes.pods.targets
+              forward_to = [loki.write.default.receiver]
+            }
+            loki.write "default" {
+              endpoint {
+                url = "http://lgtm-loki-gateway.observability.svc.cluster.local/loki/api/v1/push"
+              }
+            }
         extraPorts:
           - name: otlp-grpc
             port: 4317
