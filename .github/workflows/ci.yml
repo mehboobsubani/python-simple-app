@@ -53,6 +53,8 @@ jobs:
         env:
           CHART_VERSION: 0.1.${{ github.run_number }}
         run: |
+          helm repo add grafana https://grafana.github.io/helm-charts
+          helm repo update
           helm dependency build helm/lgtm
           helm package helm/python-simple-app --version "$CHART_VERSION"
           helm package helm/lgtm --version "$CHART_VERSION"
