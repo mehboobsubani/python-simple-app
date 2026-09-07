@@ -1,0 +1,32 @@
+replicaCount: 2
+
+image:
+  repository: ghcr.io/example/python-simple-app
+  tag: latest
+  pullPolicy: IfNotPresent
+
+serviceAccount:
+  create: true
+  automount: false
+
+service:
+  type: ClusterIP
+  httpPort: 5000
+  grpcPort: 50051
+
+otel:
+  endpoint: http://alloy.observability.svc.cluster.local:4317
+  serviceName: python-simple-app
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+ingress:
+  enabled: false
+  className: nginx
+  host: python-simple-app.localhost

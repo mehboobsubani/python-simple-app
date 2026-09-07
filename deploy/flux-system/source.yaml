@@ -1,0 +1,12 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: python-simple-app
+  namespace: flux-system
+spec:
+  interval: 1m
+  # Replace with the repository URL and configure authentication in Flux,
+  # if the repository is private. No credentials are stored here.
+  url: https://github.com/mehboobsubani/python-simple-app
+  ref:
+    branch: main
