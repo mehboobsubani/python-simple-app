@@ -1,0 +1,10 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImageRepository
+metadata:
+  name: python-simple-app
+  namespace: flux-system
+spec:
+  image: mehb786/python-simple-app
+  interval: 1m
+  secretRef:
+    name: dockerhub-credentials

@@ -1,0 +1,14 @@
+apiVersion: image.toolkit.fluxcd.io/v1beta2
+kind: ImagePolicy
+metadata:
+  name: python-simple-app
+  namespace: flux-system
+spec:
+  imageRepositoryRef:
+    name: python-simple-app
+  filterTags:
+    pattern: "^v1\\.0\\.(?P<build>[0-9]+)$"
+    extract: "$build"
+  policy:
+    numerical:
+      order: asc

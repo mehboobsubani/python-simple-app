@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    paths:
+      - application/**
+      - helm/**
+      - .github/workflows/ci.yml
   workflow_dispatch:
 
 env:

@@ -16,7 +16,7 @@ spec:
   values:
     image:
       repository: mehb786/python-simple-app
-      tag: v1.0.0
+      tag: v1.0.0 # {"$imagepolicy": "flux-system:python-simple-app"}
       pullPolicy: IfNotPresent
     replicaCount: 1
     ingress:

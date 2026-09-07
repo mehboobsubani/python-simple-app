@@ -10,6 +10,8 @@ spec:
   url: https://github.com/mehboobsubani/python-simple-app
   ref:
     branch: main
+  secretRef:
+    name: github-token
 ---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
@@ -20,3 +22,5 @@ spec:
   type: oci
   interval: 5m
   url: oci://registry-1.docker.io/mehb786
+  secretRef:
+    name: dockerhub-credentials
