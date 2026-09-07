@@ -5,6 +5,3 @@ resources:
   - observability-kustomization.yaml
   - python-simple-app-namespace.yaml
   - python-simple-app-helmrelease.yaml
-  - python-simple-app-image-repository.yaml
-  - python-simple-app-image-policy.yaml
-  - python-simple-app-image-automation.yaml

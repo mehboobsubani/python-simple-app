@@ -31,23 +31,11 @@ kubectl create secret docker-registry dockerhub-credentials \
   --docker-password="$DOCKERHUB_TOKEN"
 ```
 
-For ImageUpdateAutomation to push updated image tags back to GitHub, create a
-`github-token` Secret in `flux-system` containing a GitHub token with contents
-write access:
-
-```bash
-kubectl create secret generic github-token \
-  --namespace flux-system \
-  --from-literal=username=fluxcdbot \
-  --from-literal=password="$GITHUB_TOKEN"
-```
-
-Flux manages both HelmReleases. Its ImagePolicy selects the highest
-`v1.0.x` image, and ImageUpdateAutomation updates
-`deploy/flux-system/python-simple-app-helmrelease.yaml` after CI publishes a
-new image. The GitHub token used by ImageUpdateAutomation must be configured
-for the `application-manifests` GitRepository; do not commit that token.
-The chart versions are selected from Docker Hub OCI using `>=0.1.0`.
+Flux manages both HelmReleases. The Python HelmRelease selects the newest
+published OCI chart using version constraint `>=0.1.0`. CI packages each
+Python chart with the matching application image tag (`v1.0.<run_number>`), so
+Flux upgrades the chart and image together without ImagePolicy or
+ImageUpdateAutomation.
 
 Install or upgrade the application directly:
 

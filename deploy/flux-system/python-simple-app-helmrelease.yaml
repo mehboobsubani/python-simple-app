@@ -14,10 +14,6 @@ spec:
         name: dockerhub-charts
         namespace: flux-system
   values:
-    image:
-      repository: mehb786/python-simple-app
-      tag: mehb786/python-simple-app:v1.0.12 # {"$imagepolicy": "flux-system:python-simple-app"}
-      pullPolicy: IfNotPresent
     replicaCount: 1
     ingress:
       enabled: true
