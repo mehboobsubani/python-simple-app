@@ -25,15 +25,21 @@ spec:
       type: ClusterIP
     persistence:
       enabled: false
+    sidecar:
+      datasources:
+        enabled: true
     datasources:
       datasources.yaml:
         apiVersion: 1
         datasources:
-          - name: Prometheus
+          - name: Mimir
             type: prometheus
             access: proxy
-            url: http://prometheus-server.observability.svc.cluster.local
+            url: http://mimir-nginx.observability.svc.cluster.local/prometheus
             isDefault: true
+            jsonData:
+              httpMethod: POST
+              timeInterval: 15s
           - name: Tempo
             type: tempo
             access: proxy

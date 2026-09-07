@@ -46,7 +46,7 @@ spec:
 
           prometheus.remote_write "default" {
             endpoint {
-              url = "http://prometheus-server.observability.svc.cluster.local/api/v1/write"
+              url = "http://mimir-nginx.observability.svc.cluster.local/api/v1/push"
             }
           }
       extraPorts:

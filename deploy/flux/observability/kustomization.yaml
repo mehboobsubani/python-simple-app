@@ -6,5 +6,5 @@ resources:
   - grafana.yaml
   - loki.yaml
   - tempo.yaml
-  - prometheus.yaml
+  - mimir.yaml
   - alloy.yaml

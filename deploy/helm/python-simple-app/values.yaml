@@ -1,7 +1,7 @@
 replicaCount: 2
 
 image:
-  repository: ghcr.io/example/python-simple-app
+  repository: mehb786/python-simple-app
   tag: latest
   pullPolicy: IfNotPresent
 
