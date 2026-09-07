@@ -49,7 +49,6 @@ spec:
           ring:
             replication_factor: 1
         common:
-          replication_factor: 1
           storage:
             backend: filesystem
         blocks_storage:
