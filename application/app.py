@@ -48,7 +48,7 @@ def index():
         {
             "message": "Flask and gRPC shopping service",
             "http_endpoints": ["/products", "/cart"],
-            "grpc_service": "ShoppingCatalog/GetProduct",
+            "grpc_service": "ShoppingCatalog/GetProducts",
         }
     )
 
