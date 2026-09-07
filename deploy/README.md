@@ -1,7 +1,9 @@
 # Kubernetes deployment
 
-The application is packaged only as `helm/python-simple-app`. Flux installs
-that chart through `flux/apps/helmrelease.yaml`. The LGTM stack is packaged
+The application is packaged only as `helm/python-simple-app` at the repository
+root. Flux installs that chart through
+`flux-system/python-simple-app-helmrelease.yaml`. There is no separate
+application Flux Kustomization. The LGTM stack is packaged
 only as Flux `HelmRelease` resources under `flux/observability`, grouped by a
 Kustomize file. It includes Grafana, Loki, Tempo, Mimir, and Grafana Alloy.
 

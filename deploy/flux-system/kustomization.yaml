@@ -4,4 +4,4 @@ resources:
   - namespace.yaml
   - source.yaml
   - observability-kustomization.yaml
-  - app-kustomization.yaml
+  - python-simple-app-helmrelease.yaml
